@@ -7,16 +7,17 @@ ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 WORKDIR /root
 
 # Remove the version of solc installed by Etheno
+RUN add-apt-repository ppa:ethereum/ethereum
+RUN apt update
 RUN apt-get -y remove solc
+
+# Required to install embark
+RUN apt-get install git g++ make python -y 
 
 # Slither now requires npx
 # Also install Embark while we are at it
-
-RUN npm install --force -g \
-    embark \
-    @trailofbits/embark-contract-info \
-    n && \
-    n stable && n prune && npm --force cache clean
+RUN npm install n embark @trailofbits/embark-contract-info -g
+RUN n stable && n prune && npm --force cache clean
 
 WORKDIR /home
 
@@ -34,7 +35,7 @@ WORKDIR /home/ethsec
 ENV HOME="/home/ethsec"
 ENV PATH="${PATH}:${HOME}/.local/bin"
 
-RUN mv examples etheno-examples
+#RUN mv examples etheno-examples
 
 # Install all and select the latest version of solc as the default
 # SOLC_VERSION is defined to a valid version to avoid a warning message on the output
@@ -48,6 +49,8 @@ RUN git clone --depth 1 https://github.com/trailofbits/not-so-smart-contracts.gi
     git clone --depth 1 https://github.com/trailofbits/rattle.git && \
     git clone --depth 1 https://github.com/crytic/building-secure-contracts
 
+# update python dep 
+RUN pip list --outdated | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U; exit 0
 
 
 
