@@ -8,7 +8,7 @@ WORKDIR /root
 
 # Remove the version of solc installed by Etheno
 RUN add-apt-repository ppa:ethereum/ethereum
-RUN apt update
+RUN apt-get update
 RUN apt-get -y remove solc
 
 # Required to install embark
@@ -51,7 +51,7 @@ RUN git clone --depth 1 https://github.com/trailofbits/not-so-smart-contracts.gi
 
 # update python dep 
 RUN pip list --outdated | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U; exit 0
-
+RUN sudo npm install --global yarn
 
 
 USER root
